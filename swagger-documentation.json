@@ -60,10 +60,7 @@
           "200": {
             "description": "successful operation",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Network"
-              }
+              "$ref": "#/definitions/NetworksList"
             }
           }
         }
@@ -74,7 +71,7 @@
         "tags": [
           "network"
         ],
-        "summary": "Get all stations for a specific network.",
+        "summary": "Get the details of a specific network, including it's bike stations.",
         "description": "Returns the list of the stations of a network.",
         "operationId": "getStationsForNetwork",
         "produces": [
@@ -93,10 +90,7 @@
           "200": {
             "description": "successful operation",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Station"
-              }
+              "$ref": "#/definitions/NetworkDetails"
             }
           },
           "404": {
@@ -107,7 +101,32 @@
     }
   },
   "definitions": {
-    "Network": {
+    "NetworksList": {
+      "type": "object",
+      "properties": {
+        "networks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ShortNetwork"
+          }
+        }
+      },
+      "required": [
+        "networks"
+      ]
+    },
+    "NetworkDetails": {
+      "type": "object",
+      "properties": {
+        "network": {
+          "$ref": "#/definitions/FullNetwork"
+        }
+      },
+      "required": [
+        "network"
+      ]
+    },
+    "ShortNetwork": {
       "type": "object",
       "properties": {
         "id": {
@@ -147,6 +166,63 @@
         }
       }
     },
+    "FullNetwork": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri"
+        },
+        "company": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "license": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          }
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string"
+            },
+            "country": {
+              "type": "string"
+            },
+            "latitude": {
+              "type": "number",
+              "format": "double"
+            },
+            "longitude": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        },
+        "stations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Station"
+          }
+        }
+      }
+    },
     "Station": {
       "type": "object",
       "properties": {
@@ -165,16 +241,44 @@
           "format": "double"
         },
         "free_bikes": {
-          "type": "integer",
-          "format": "int32"
+          "type": "integer"
         },
         "empty_slots": {
-          "type": "integer",
-          "format": "int32"
+          "type": "integer"
         },
         "timestamp": {
-          "type": "string",
-          "format": "date-time"
+          "type": "string"
+        },
+        "extra": {
+          "type": "object",
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "banking": {
+              "type": "boolean"
+            },
+            "bonus": {
+              "type": "boolean"
+            },
+            "slots": {
+              "type": "integer"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "OPEN",
+                "CLOSED"
+              ]
+            },
+            "last_update": {
+              "type": "number",
+              "format": "double"
+            },
+            "uid": {
+              "type": "integer"
+            }
+          }
         }
       }
     }
