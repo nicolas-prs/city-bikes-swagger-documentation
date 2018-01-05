@@ -1,0 +1,290 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is the Swagger documentation for the Open City Bikes API based on https://api.citybik.es/v2",
+    "version": "1.0.0",
+    "title": "City Bikes API",
+    "termsOfService": "https://api.citybik.es/v2/#net_resource",
+    "contact": {
+      "email": "nicolas.parimeros@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "api.citybik.es",
+  "basePath": "/v2",
+  "tags": [
+    {
+      "name": "network",
+      "description": "All the different networks on which you can find bikes around the world."
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/networks": {
+      "get": {
+        "tags": [
+          "network"
+        ],
+        "summary": "Get all the networks.",
+        "description": "Each network is identified by a unique identifier, and has a specific name, as well as a specific location.",
+        "operationId": "getNetworks",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Fields can be filtered to limit the fields you want the results to be composed of.",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "id",
+                "name",
+                "href",
+                "company",
+                "location"
+              ]
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/NetworksList"
+            }
+          }
+        }
+      }
+    },
+    "/networks/{networkId}": {
+      "get": {
+        "tags": [
+          "network"
+        ],
+        "summary": "Get the details of a specific network, including it's bike stations.",
+        "description": "Returns the list of the stations of a network.",
+        "operationId": "getStationsForNetwork",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "networkId",
+            "in": "path",
+            "description": "ID of the network to get it's stations.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/NetworkDetails"
+            }
+          },
+          "404": {
+            "description": "Network not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "NetworksList": {
+      "type": "object",
+      "properties": {
+        "networks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ShortNetwork"
+          }
+        }
+      },
+      "required": [
+        "networks"
+      ]
+    },
+    "NetworkDetails": {
+      "type": "object",
+      "properties": {
+        "network": {
+          "$ref": "#/definitions/FullNetwork"
+        }
+      },
+      "required": [
+        "network"
+      ]
+    },
+    "ShortNetwork": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri"
+        },
+        "company": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string"
+            },
+            "country": {
+              "type": "string"
+            },
+            "latitude": {
+              "type": "number",
+              "format": "double"
+            },
+            "longitude": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        }
+      }
+    },
+    "FullNetwork": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri"
+        },
+        "company": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "license": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          }
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string"
+            },
+            "country": {
+              "type": "string"
+            },
+            "latitude": {
+              "type": "number",
+              "format": "double"
+            },
+            "longitude": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        },
+        "stations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Station"
+          }
+        }
+      }
+    },
+    "Station": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "free_bikes": {
+          "type": "integer"
+        },
+        "empty_slots": {
+          "type": "integer"
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "extra": {
+          "type": "object",
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "banking": {
+              "type": "boolean"
+            },
+            "bonus": {
+              "type": "boolean"
+            },
+            "slots": {
+              "type": "integer"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "OPEN",
+                "CLOSED"
+              ]
+            },
+            "last_update": {
+              "type": "number",
+              "format": "double"
+            },
+            "uid": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about City Bikes",
+    "url": "https://api.citybik.es/v2/"
+  }
+}
